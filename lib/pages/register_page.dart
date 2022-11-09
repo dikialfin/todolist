@@ -1,5 +1,7 @@
+import 'package:daily_task/cubit/auth_cubit.dart';
 import 'package:daily_task/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -9,6 +11,11 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _fullName = TextEditingController();
+  final TextEditingController _emailAddress = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _confirmPassword = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,38 +72,46 @@ class _RegisterPageState extends State<RegisterPage> {
                     top: (MediaQuery.of(context).size.height * 2 / 100)),
                 width: (MediaQuery.of(context).size.width * 20 / 100),
                 child: Column(children: [
-                  TextField(
+                  TextFormField(
+                    controller: _fullName,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10)),
                         hintText: 'Enter your full name'),
+                    textInputAction: TextInputAction.next,
                   ),
                   SizedBox(
                     height: (MediaQuery.of(context).size.height * 3 / 100),
                   ),
-                  TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          hintText: 'enter your email address')),
-                  SizedBox(
-                    height: (MediaQuery.of(context).size.height * 3 / 100),
-                  ),
-                  TextField(
+                  TextFormField(
+                    controller: _emailAddress,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10)),
-                        hintText: 'Create a Password'),
+                        hintText: 'Enter your email address'),
+                    textInputAction: TextInputAction.next,
+                  ),
+                  SizedBox(
+                    height: (MediaQuery.of(context).size.height * 3 / 100),
+                  ),
+                  TextFormField(
+                    controller: _password,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        hintText: 'Enter your password'),
                     obscureText: true,
+                    textInputAction: TextInputAction.next,
                   ),
                   SizedBox(
                     height: (MediaQuery.of(context).size.height * 3 / 100),
                   ),
-                  TextField(
+                  TextFormField(
+                    controller: _confirmPassword,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10)),
-                        hintText: 'Confirm your Password'),
+                        hintText: 'Enter your verify password'),
                     obscureText: true,
                   ),
                 ]),
@@ -106,14 +121,45 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 80),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, "/add_todo", (route) => false);
-                  },
-                  child: Text("Sign Up"),
-                  style: ElevatedButton.styleFrom(primary: greenColor),
-                ),
+                child: BlocConsumer<AuthCubit, AuthState>(
+                    listener: (context, state) {
+                  if (state is AuthSuccess) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Regis Berhasil'),
+                      backgroundColor: greenColor,
+                    ));
+                  } else if (state is AuthFailed) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(state.errorMessage),
+                      backgroundColor: Colors.red,
+                    ));
+                  }
+                }, builder: (context, state) {
+                  if (state is AuthLoading) {
+                    return SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: greenColor,
+                        ),
+                      ),
+                    );
+                  }
+                  return ElevatedButton(
+                    onPressed: () {
+                      context.read<AuthCubit>().register(
+                          email: _emailAddress.text,
+                          name: _fullName.text,
+                          confirmPassword: _confirmPassword.text,
+                          password: _password.text);
+                      // Navigator.pushNamedAndRemoveUntil(
+                      //     context, "/add_todo", (route) => false);
+                    },
+                    child: Text("Sign Up"),
+                    style: ElevatedButton.styleFrom(primary: greenColor),
+                  );
+                }),
               ),
               SizedBox(
                 height: 50,
@@ -134,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             fontSize: 15, color: greenColor)),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

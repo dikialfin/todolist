@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "70951426933",
+    "project_id": "todolist-f7b88",
+    "storage_bucket": "todolist-f7b88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70951426933:android:e9133104128fd7f3c7d13c",
+        "android_client_info": {
+          "package_name": "com.diki.daily_task"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70951426933-m2b0qhtldm15l3qsofvmrrftptg9qdtc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBumpXqjjAS6Kld4W3ArT9iF6ONdVJtNAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70951426933-m2b0qhtldm15l3qsofvmrrftptg9qdtc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
