@@ -10,38 +10,6 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
-  bool validatePassword(
-      {required String password, required String confirmPassword}) {
-    if (password == null || password == '') {
-      emit(AuthFailed('password is required'));
-      return false;
-    }
-    if (password != confirmPassword) {
-      emit(AuthFailed('password not match'));
-      return false;
-    }
-    if (password.length < 5) {
-      emit(AuthFailed('password to short'));
-      return false;
-    }
-
-    return true;
-  }
-
-  bool validateName({required String name}) {
-    if (name == null || name == '') {
-      emit(AuthFailed('name is required'));
-      return false;
-    }
-
-    if (name.length < 2) {
-      emit(AuthFailed('name to short'));
-      return false;
-    }
-
-    return true;
-  }
-
   void register({
     required String email,
     required String name,
@@ -51,14 +19,9 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
 
-      if (validateName(name: name)) {
-        if (validatePassword(
-            password: password, confirmPassword: confirmPassword)) {
-          UserModel userdata = await AuthService()
-              .register(fullname: name, email: email, password: password);
-          emit(AuthSuccess(userdata));
-        }
-      }
+      UserModel userdata = await AuthService()
+          .register(fullname: name, email: email, password: password);
+      emit(AuthSuccess(userdata));
 
       // UserModel userData = await AuthService()
       //     .register(email: email, fullname: name, password: password);

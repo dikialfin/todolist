@@ -1,3 +1,5 @@
+import 'package:daily_task/cubit/Password/confirm_password_cubit.dart';
+import 'package:daily_task/cubit/Password/password_cubit.dart';
 import 'package:daily_task/cubit/auth_cubit.dart';
 import 'package:daily_task/themes.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailAddress = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirmPassword = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -71,50 +74,134 @@ class _RegisterPageState extends State<RegisterPage> {
                 margin: EdgeInsets.only(
                     top: (MediaQuery.of(context).size.height * 2 / 100)),
                 width: (MediaQuery.of(context).size.width * 20 / 100),
-                child: Column(children: [
-                  TextFormField(
-                    controller: _fullName,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        hintText: 'Enter your full name'),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  SizedBox(
-                    height: (MediaQuery.of(context).size.height * 3 / 100),
-                  ),
-                  TextFormField(
-                    controller: _emailAddress,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        hintText: 'Enter your email address'),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  SizedBox(
-                    height: (MediaQuery.of(context).size.height * 3 / 100),
-                  ),
-                  TextFormField(
-                    controller: _password,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        hintText: 'Enter your password'),
-                    obscureText: true,
-                    textInputAction: TextInputAction.next,
-                  ),
-                  SizedBox(
-                    height: (MediaQuery.of(context).size.height * 3 / 100),
-                  ),
-                  TextFormField(
-                    controller: _confirmPassword,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        hintText: 'Enter your verify password'),
-                    obscureText: true,
-                  ),
-                ]),
+                child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _fullName,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              hintText: 'Enter your full name'),
+                          textInputAction: TextInputAction.next,
+                          validator: (value) {
+                            if (value == null || value == '') {
+                              return 'name is required';
+                            }
+
+                            if (value.length < 2) {
+                              return 'name to short';
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          height:
+                              (MediaQuery.of(context).size.height * 3 / 100),
+                        ),
+                        TextFormField(
+                          controller: _emailAddress,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              hintText: 'Enter your email address'),
+                          textInputAction: TextInputAction.next,
+                          validator: (value) {
+                            final String emailRegex =
+                                r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+
+                            if (value == null || value == '') {
+                              return 'Email is required';
+                            }
+
+                            if (RegExp(emailRegex).hasMatch(value) == false) {
+                              return 'Email not valid';
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          height:
+                              (MediaQuery.of(context).size.height * 3 / 100),
+                        ),
+                        BlocBuilder<PasswordCubit, bool>(
+                            builder: (context, state) {
+                          final iconPassword = state == true
+                              ? Icon(
+                                  Icons.visibility_off,
+                                  color: Colors.black,
+                                )
+                              : Icon(
+                                  Icons.visibility,
+                                  color: Colors.black,
+                                );
+
+                          return TextFormField(
+                            controller: _password,
+                            decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                    onPressed: () {
+                                      context
+                                          .read<PasswordCubit>()
+                                          .passwordVisible();
+                                    },
+                                    icon: iconPassword),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                hintText: 'Enter your password'),
+                            textInputAction: TextInputAction.next,
+                            obscureText: state,
+                            validator: (value) {
+                              if (value == "" || value == null) {
+                                return "Password is required";
+                              } else if (value.length < 5) {
+                                return "Password to short";
+                              }
+                            },
+                          );
+                        }),
+                        SizedBox(
+                          height:
+                              (MediaQuery.of(context).size.height * 3 / 100),
+                        ),
+                        BlocBuilder<ConfirmPasswordCubit, bool>(
+                            builder: (context, state) {
+                          final iconConfirmPassword = state == true
+                              ? Icon(
+                                  Icons.visibility_off,
+                                  color: Colors.black,
+                                )
+                              : Icon(
+                                  Icons.visibility,
+                                  color: Colors.black,
+                                );
+
+                          return TextFormField(
+                            controller: _confirmPassword,
+                            decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                    onPressed: () {
+                                      context
+                                          .read<ConfirmPasswordCubit>()
+                                          .confirmPasswordVisible();
+                                    },
+                                    icon: iconConfirmPassword),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                hintText: 'Enter your confirm password'),
+                            textInputAction: TextInputAction.done,
+                            obscureText: state,
+                            validator: (value) {
+                              if (value == "" || value == null) {
+                                return "Password is required";
+                              } else if (value != _password.text) {
+                                return "Password not match";
+                              }
+                            },
+                          );
+                          ;
+                        }),
+                      ],
+                    )),
               ),
               SizedBox(
                 height: 50,
@@ -124,6 +211,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: BlocConsumer<AuthCubit, AuthState>(
                     listener: (context, state) {
                   if (state is AuthSuccess) {
+                    _fullName.clear();
+                    _emailAddress.clear();
+                    _password.clear();
+                    _confirmPassword.clear();
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text('Regis Berhasil'),
                       backgroundColor: greenColor,
@@ -148,13 +239,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   }
                   return ElevatedButton(
                     onPressed: () {
-                      context.read<AuthCubit>().register(
-                          email: _emailAddress.text,
-                          name: _fullName.text,
-                          confirmPassword: _confirmPassword.text,
-                          password: _password.text);
-                      // Navigator.pushNamedAndRemoveUntil(
-                      //     context, "/add_todo", (route) => false);
+                      if (_formKey.currentState!.validate() == true) {
+                        context.read<AuthCubit>().register(
+                            email: _emailAddress.text,
+                            name: _fullName.text,
+                            confirmPassword: _confirmPassword.text,
+                            password: _password.text);
+                      }
                     },
                     child: Text("Sign Up"),
                     style: ElevatedButton.styleFrom(primary: greenColor),

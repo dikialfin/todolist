@@ -1,3 +1,5 @@
+import 'package:daily_task/cubit/Password/confirm_password_cubit.dart';
+import 'package:daily_task/cubit/Password/password_cubit.dart';
 import 'package:daily_task/cubit/auth_cubit.dart';
 import 'package:daily_task/pages/add_todo.dart';
 import 'package:daily_task/pages/dashboard_page.dart';
@@ -24,6 +26,12 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => AuthCubit(),
+          ),
+          BlocProvider(
+            create: (context) => PasswordCubit(),
+          ),
+          BlocProvider(
+            create: (context) => ConfirmPasswordCubit(),
           ),
         ],
         child: MaterialApp(
