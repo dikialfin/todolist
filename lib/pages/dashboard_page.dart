@@ -2,6 +2,9 @@ import 'package:daily_task/custom_clipper.dart';
 import 'package:daily_task/models/user_model.dart';
 import 'package:daily_task/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/auth_cubit.dart';
 
 class DashboardPage extends StatelessWidget {
   final UserModel userData;
@@ -147,6 +150,49 @@ class DashboardPage extends StatelessWidget {
                               }),
                         )
                       ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Center(
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 80),
+                      child: BlocConsumer<AuthCubit, AuthState>(
+                          listener: (context, state) {
+                        if (state is AuthSuccess) {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/login', (route) => false);
+                        } else if (state is AuthFailed) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(state.errorMessage),
+                            backgroundColor: Colors.red,
+                          ));
+                        }
+                      }, builder: (context, state) {
+                        if (state is AuthLoading) {
+                          return SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: greenColor,
+                              ),
+                            ),
+                          );
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            context.read<AuthCubit>().logout();
+                          },
+                          child: Text(
+                            "Sign Out",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(primary: Colors.red),
+                        );
+                      }),
                     ),
                   ),
                   SizedBox(

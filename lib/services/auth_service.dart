@@ -33,4 +33,13 @@ class AuthService {
         await UserService().getUserById(id: userCredential.user!.uid);
     return userData;
   }
+
+  Future<bool> logout() async {
+    try {
+      await _firebaseAuth.signOut();
+      return true;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

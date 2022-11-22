@@ -6,6 +6,7 @@ import 'package:daily_task/services/auth_service.dart';
 import 'package:daily_task/services/user_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 part 'auth_state.dart';
 
@@ -46,6 +47,16 @@ class AuthCubit extends Cubit<AuthState> {
       } else if (e.code == "user-not-found") {
         emit(AuthFailed('Email is not registered'));
       }
+    }
+  }
+
+  void logout() async {
+    try {
+      emit(AuthLoading());
+      await AuthService().logout();
+      emit(AuthSuccess(UserModel(uid: 'aaa', name: 'aaa', email: 'aaa')));
+    } on FirebaseAuthException catch (e) {
+      emit(AuthFailed(e.toString()));
     }
   }
 }
