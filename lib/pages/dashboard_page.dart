@@ -1,15 +1,12 @@
 import 'package:daily_task/custom_clipper.dart';
+import 'package:daily_task/models/user_model.dart';
 import 'package:daily_task/themes.dart';
 import 'package:flutter/material.dart';
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({Key? key}) : super(key: key);
+class DashboardPage extends StatelessWidget {
+  final UserModel userData;
+  const DashboardPage({Key? key, required this.userData}) : super(key: key);
 
-  @override
-  State<DashboardPage> createState() => _DashboardPageState();
-}
-
-class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +60,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               width: (MediaQuery.of(context).size.width *
                                   60 /
                                   100),
-                              child: Text('Welcome Fisayomi',
+                              child: Text('Welcome ${userData.name}',
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
                                   style: fontStyle.copyWith(

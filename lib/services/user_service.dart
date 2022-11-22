@@ -15,4 +15,14 @@ class UserService {
       });
     } catch (e) {}
   }
+
+  Future<UserModel> getUserById({required String id}) async {
+    try {
+      DocumentSnapshot userData = await userCollection.doc(id).get();
+      return UserModel(
+          uid: id, name: userData['name'], email: userData['email']);
+    } on FirebaseException catch (e) {
+      throw e;
+    }
+  }
 }

@@ -23,4 +23,14 @@ class AuthService {
       throw e;
     }
   }
+
+  Future<UserModel> login(
+      {required String email, required String password}) async {
+    UserCredential userCredential = await _firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password);
+
+    UserModel userData =
+        await UserService().getUserById(id: userCredential.user!.uid);
+    return userData;
+  }
 }

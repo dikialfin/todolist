@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:daily_task/models/user_model.dart';
 import 'package:daily_task/services/auth_service.dart';
@@ -27,6 +29,23 @@ class AuthCubit extends Cubit<AuthState> {
       //     .register(email: email, fullname: name, password: password);
     } on FirebaseAuthException catch (e) {
       emit(AuthFailed(e.message.toString()));
+    }
+  }
+
+  void login({required String email, required String password}) async {
+    try {
+      emit(AuthLoading());
+      UserModel userData =
+          await AuthService().login(email: email, password: password);
+      emit(AuthSuccess(userData));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "wrong-password") {
+        emit(AuthFailed('Password invalid'));
+      } else if (e.code == "invalid-email") {
+        emit(AuthFailed('Email invalid'));
+      } else if (e.code == "user-not-found") {
+        emit(AuthFailed('Email is not registered'));
+      }
     }
   }
 }
