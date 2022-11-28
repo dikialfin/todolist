@@ -184,7 +184,28 @@ class DashboardPage extends StatelessWidget {
                         }
                         return ElevatedButton(
                           onPressed: () {
-                            context.read<AuthCubit>().logout();
+                            // context.read<AuthCubit>().logout();
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title:
+                                        Text('are you sure you want to exit?'),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Cancel')),
+                                      TextButton(
+                                          onPressed: () {
+                                            context.read<AuthCubit>().logout();
+                                          },
+                                          child: Text('Yes, Sure'))
+                                    ],
+                                  );
+                                });
                           },
                           child: Text(
                             "Sign Out",
