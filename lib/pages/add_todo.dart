@@ -1,15 +1,25 @@
+import 'package:daily_task/cubit/todo/cubit/todo_cubit.dart';
+import 'package:daily_task/models/user_model.dart';
+import 'package:daily_task/pages/dashboard_page.dart';
 import 'package:daily_task/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddTodoPage extends StatefulWidget {
-  const AddTodoPage({Key? key}) : super(key: key);
+  AddTodoPage({Key? key}) : super(key: key);
 
   @override
   State<AddTodoPage> createState() => _AddTodoPageState();
 }
 
 class _AddTodoPageState extends State<AddTodoPage> {
+  TextEditingController todo1 = TextEditingController();
+  TextEditingController todo2 = TextEditingController();
+  TextEditingController todo3 = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,45 +82,142 @@ class _AddTodoPageState extends State<AddTodoPage> {
               margin: EdgeInsets.only(
                   top: (MediaQuery.of(context).size.height * 2 / 100)),
               width: (MediaQuery.of(context).size.width * 20 / 100),
-              child: Column(children: [
-                TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
+              child: Form(
+                key: _formKey,
+                child: Column(children: [
+                  TextFormField(
+                    controller: todo1,
+                    decoration: InputDecoration(
+                      hintText: "Type youre todo here ....",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    textInputAction: TextInputAction.next,
+                    validator: (value) {
+                      if (value == null || value == '') {
+                        return 'todo is required';
+                      }
+                    },
                   ),
-                  textInputAction: TextInputAction.next,
-                ),
-                SizedBox(
-                  height: (MediaQuery.of(context).size.height * 3 / 100),
-                ),
-                TextField(
+                  SizedBox(
+                    height: (MediaQuery.of(context).size.height * 3 / 100),
+                  ),
+                  TextFormField(
+                    controller: todo2,
                     decoration: InputDecoration(
+                      hintText: "Type youre todo here ....",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
-                    textInputAction: TextInputAction.next),
-                SizedBox(
-                  height: (MediaQuery.of(context).size.height * 3 / 100),
-                ),
-                TextField(
+                    textInputAction: TextInputAction.next,
+                    validator: (value) {
+                      if (value == null || value == '') {
+                        return 'todo is required';
+                      }
+                    },
+                  ),
+                  SizedBox(
+                    height: (MediaQuery.of(context).size.height * 3 / 100),
+                  ),
+                  TextFormField(
+                    controller: todo3,
                     decoration: InputDecoration(
+                      hintText: "Type youre todo here ....",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
-                    textInputAction: TextInputAction.done),
-              ]),
+                    textInputAction: TextInputAction.done,
+                    validator: (value) {
+                      if (value == null || value == '') {
+                        return 'todo is required';
+                      }
+                    },
+                  ),
+                ]),
+              ),
             ),
             SizedBox(
               height: 25,
             ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 80),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "/dashboard");
+              child: BlocConsumer<TodoCubit, TodoState>(
+                listener: (context, state) {
+                  if (state is TodoSuccess) {
+                    todo1.clear();
+                    todo2.clear();
+                    todo3.clear();
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Success'),
+                            content: SingleChildScrollView(
+                                child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 50,
+                                ),
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                  size: 50,
+                                ),
+                                SizedBox(
+                                  height: 50,
+                                ),
+                                Text('data berhasil di tambahkan')
+                              ],
+                            )),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Add More')),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Go To Dashboard'))
+                            ],
+                          );
+                        });
+                  }
+                  if (state is TodoFailed) {
+                    AlertDialog(
+                      content: Text('Failed'),
+                    );
+                  }
                 },
-                child: Text("Add to list"),
-                style: ElevatedButton.styleFrom(primary: greenColor),
+                builder: (context, state) {
+                  if (state is TodoLoading) {
+                    return SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: greenColor,
+                        ),
+                      ),
+                    );
+                  }
+                  return ElevatedButton(
+                    onPressed: () {
+                      // Navigator.pushNamed(context, "/dashboard");
+                      if (_formKey.currentState!.validate() == true) {
+                        context.read<TodoCubit>().addTodo(
+                            todo1: todo1.text,
+                            todo2: todo2.text,
+                            todo3: todo3.text);
+                      }
+                    },
+                    child: Text("Add to list"),
+                    style: ElevatedButton.styleFrom(primary: greenColor),
+                  );
+                },
               ),
             ),
             SizedBox(

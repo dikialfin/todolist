@@ -24,6 +24,16 @@ class AuthService {
     }
   }
 
+  Future<String> getcurrentUserId() async {
+    try {
+      var userUid = await _firebaseAuth.currentUser!.uid;
+
+      return userUid;
+    } on FirebaseException catch (e) {
+      throw e;
+    }
+  }
+
   Future<UserModel> login(
       {required String email, required String password}) async {
     UserCredential userCredential = await _firebaseAuth

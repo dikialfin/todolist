@@ -1,6 +1,7 @@
 import 'package:daily_task/cubit/Password/confirm_password_cubit.dart';
 import 'package:daily_task/cubit/Password/password_cubit.dart';
 import 'package:daily_task/cubit/auth_cubit.dart';
+import 'package:daily_task/cubit/todo/cubit/todo_cubit.dart';
 import 'package:daily_task/pages/add_todo.dart';
 import 'package:daily_task/pages/dashboard_page.dart';
 import 'package:daily_task/pages/login_page.dart';
@@ -22,26 +23,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => AuthCubit(),
-          ),
-          BlocProvider(
-            create: (context) => PasswordCubit(),
-          ),
-          BlocProvider(
-            create: (context) => ConfirmPasswordCubit(),
-          ),
-        ],
-        child: MaterialApp(
-          title: 'Daily Task App',
-          routes: {
-            '/': (context) => StartedPage(),
-            '/register': (context) => RegisterPage(),
-            '/login': (context) => LoginPage(),
-            '/add_todo': (context) => AddTodoPage(),
-          },
-        ));
+    return MultiBlocProvider(providers: [
+      BlocProvider(
+        create: (context) => AuthCubit(),
+      ),
+      BlocProvider(
+        create: (context) => PasswordCubit(),
+      ),
+      BlocProvider(
+        create: (context) => ConfirmPasswordCubit(),
+      ),
+      BlocProvider(
+        create: (context) => TodoCubit(),
+      ),
+    ], child: MaterialApp(title: 'Daily Task App', home: StartedPage()));
   }
 }

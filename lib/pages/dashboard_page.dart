@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/auth_cubit.dart';
+import 'add_todo.dart';
 
 class DashboardPage extends StatelessWidget {
   final UserModel userData;
@@ -122,7 +123,10 @@ class DashboardPage extends StatelessWidget {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(context, "/add_todo");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddTodoPage()));
                               },
                               child: Icon(Icons.add_circle_rounded),
                             )

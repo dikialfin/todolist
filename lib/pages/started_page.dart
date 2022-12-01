@@ -1,3 +1,4 @@
+import 'package:daily_task/pages/login_page.dart';
 import 'package:daily_task/themes.dart';
 import 'package:flutter/material.dart';
 
@@ -63,8 +64,10 @@ class StartedPage extends StatelessWidget {
               color: greenColor,
               child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/login', (route) => false);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (route) => false);
                   },
                   child: Text(
                     'Get Started',
